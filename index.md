@@ -1,4 +1,3 @@
-# Welcome to My Blog 👋
 layout: home
 
 Hi, I'm r00t3r.
