@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-9e2d7a84.js";
+            window.path_to_searchindex_js = "searchindex-03067677.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e65c25cd.js"></script>
+        <script src="toc-82b7c2a0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,16 +179,28 @@
 <h2 id="about-the-author"><a class="header" href="#about-the-author">About the author</a></h2>
 <p><img src="images/me/author.jpeg" alt="Author"></p>
 <p>I am a cybersecurity student at ISBAT University with a strong passion for offensive security, threat analysis, and digital forensics. My journey into cybersecurity has been driven by hands-on experience, competitive problem-solving, and continuous learning through real-world simulations and Capture The Flag (CTF) competitions.</p>
-<p>I am an active CTF player and a core member of the L0C41M3N team, frequently competing under the Uguntu cybersecurity community, one of the leading cybersecurity groups in Uganda. Through these platforms, I have developed solid practical skills in red teaming, web exploitation, and vulnerability analysis.</p>
+<p>I am an active CTF player and a core member of the L0C41M3N team, frequently competing under the <a href="https://uguntu.com/">Uguntu</a> cybersecurity community, one of the leading cybersecurity groups in Uganda. Through these platforms, I have developed solid practical skills in red teaming, web exploitation, and vulnerability analysis.</p>
 <p>My experience includes high-level performance in both individual and team-based competitions. Notably, I ranked among the top competitors in multiple regional and global CTFs, including achieving top rankings in Uganda during Cyberstars 2025 and Bank Heist (H4k-IT), as well as contributing to a global top 100 performance in picoCTF 2025. These experiences have strengthened my ability to think critically under pressure, collaborate effectively, and approach complex security challenges with creativity.</p>
 <p>Beyond competitions, I am actively involved in practical cybersecurity work. I contribute to vulnerability research and testing, including identifying potential issues in live applications such as the Agrix application. I also have experience providing freelance IT support, which has strengthened my understanding of real-world systems and user environments.</p>
 <p>I currently hold certifications including ISC2 Certified in Cybersecurity (CC) and Cisco Ethical Hacker, and I am preparing for CompTIA Security+ to further solidify my foundational and defensive security knowledge.</p>
 <p>My long-term goal is to grow into a well-rounded cybersecurity professional, starting in Security Operations (SOC) and cloud security, while advancing towards my drean careers in red teaming, threat intelligence, and digital forensics.</p>
 <p>I am driven by curiosity, discipline, and a deep interest in understanding how systems work and how they can be secured.
-On this site i will be providing walkthroughs for my journey, challenges i met and how i went about them, ctf walkthroughs, informational writes, project walkthrougs and my achievements in cyber security. for more writes, please follow me on my other sites
-LinkedIn -&gt;
-medium -&gt;
-X.com -&gt;</p>
+On this site i will be providing walkthroughs for my journey, challenges i met and how i went about them, ctf walkthroughs, informational writes, project walkthrougs and my achievements in cyber security. for more writes, please follow me on my other sites</p>
+<ul>
+<li><a href="https://www.linkedin.com/in/sseluwooza-uthman">LinkedIn</a></li>
+<li><a href="https://medium.com/@mudiuth">Medium</a></li>
+<li><a href="https://x.com/MudiUth">X.com</a></li>
+<li><a href="https://profile.hackthebox.com/profile/019dc4c0-9616-7115-af3d-5d556f978299">Hack the box</a></li>
+<li><a href="https://tryhackme.com/p/uthmanmudi">Tryhackme</a></li>
+</ul>
+<h2 id="credentials-and-certificates"><a class="header" href="#credentials-and-certificates">Credentials and certificates</a></h2>
+<p>Below are the credentials that i have managed to collect throughout my cyber security jorney in order to certisfy my expertise.</p>
+<div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+  <img src="images/certs/ISC2.jpeg" alt="ISC2 Certified in Cybersecurity" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+  <img src="images/certs/ethical-hacker.png" alt="Cisco Ethical Hacker" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+  <img src="images/certs/isc2-candidate.png" alt="ISC2 candidate" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
+  <!-- add more badges here -->
+</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="soc-lab-101"><a href="#soc-lab-101" class="header">SOC Lab 101</a></h1>
 <h2 id="security-operation-center-homelab-101"><a class="header" href="#security-operation-center-homelab-101">Security Operation Center Homelab 101</a></h2>
@@ -704,6 +716,30 @@ default-router 195.0.0.100 255.255.255.0
 do write
 </code></pre>
 <p>And if u ping this time round, they should be able to communicate through the router.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="authentication-and-authorisation-1"><a href="#authentication-and-authorisation-1" class="header">Authentication and Authorisation</a></h1>
+<h2 id="authentication-and-authorisation"><a class="header" href="#authentication-and-authorisation">Authentication and Authorisation</a></h2>
+<p>These are the two most important aspects in security. well not most but one of the most as per say.. i dont know what you would say about this but this is according to my realisation.</p>
+<p>authentication is the process of veryfing the identity of a user, client, service etc.</p>
+<p>this is made of three main aspects / types / classifications ie :-<br>something you know, you are and you have.</p>
+<p>sonething you know can be the password, security question and answer, something you are includes the biometrics, or clearance and something you have might be a card, a security key, a device. some times it also includes the location.. somewhere you are (location based authentication)</p>
+<p>Authorisation on the other hand includes the process of verifying the kind of permission / clearance held by these parameters ie user, process, client, etc.</p>
+<p>main causes of the vulns in authentication mechanisms are</p>
+<ul>
+<li>The authentication mechanisms are weak because they fail to adequately protect against brute-force attacks.</li>
+<li>Logic flaws or poor coding in the implementation allow the
+authentication mechanisms to be bypassed entirely by an attacker. This
+is sometimes called “broken authentication”.</li>
+</ul>
+<p><strong>Logic flaws</strong> (also called <strong>business logic flaws</strong>) are security weaknesses that happen <strong>not because of broken code or missing patches</strong>, but because the <strong>application’s logic — the way it is supposed to work — is designed or implemented incorrectly</strong>. In other words, the application technically does what the developers told it to do, but the <strong>rules, assumptions, or sequence of actions are wrong</strong>, and an attacker can abuse that behavior to gain an advantage. This makes logic flaws especially dangerous because scanners and automated tools usually miss them; they require <strong>human reasoning</strong> and understanding of how the system is meant to function.</p>
+<p><strong>vulnerabilities in authentiation mechanisms</strong></p>
+<p>A systems can consist of a number of authentication mechanisms where vulnerabilities may occur. Some vulnerabilities are applicable accross all of these contexts. Others are more specific to the platforms and technologies and functionalities provided.</p>
+<ul>
+<li>https://portswigger.net/web-security/authentication/password-based</li>
+<li>https://portswigger.net/web-security/authentication/multi-factor</li>
+<li>https://portswigger.net/web-security/authentication/other-mechanisms</li>
+</ul>
+<p>Rate limiting by blokcking the ip address of the suspect. This can happen temporarily and permanently.</p>
 
                     </main>
 
