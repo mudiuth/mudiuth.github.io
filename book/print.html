@@ -1,0 +1,757 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Soc HomeLab</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-8adf115d.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-9e2d7a84.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-e65c25cd.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Soc HomeLab</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="the-author"><a href="#the-author" class="header">The Author</a></h1>
+<h2 id="about-the-author"><a class="header" href="#about-the-author">About the author</a></h2>
+<p><img src="images/me/author.jpeg" alt="Author"></p>
+<p>I am a cybersecurity student at ISBAT University with a strong passion for offensive security, threat analysis, and digital forensics. My journey into cybersecurity has been driven by hands-on experience, competitive problem-solving, and continuous learning through real-world simulations and Capture The Flag (CTF) competitions.</p>
+<p>I am an active CTF player and a core member of the L0C41M3N team, frequently competing under the Uguntu cybersecurity community, one of the leading cybersecurity groups in Uganda. Through these platforms, I have developed solid practical skills in red teaming, web exploitation, and vulnerability analysis.</p>
+<p>My experience includes high-level performance in both individual and team-based competitions. Notably, I ranked among the top competitors in multiple regional and global CTFs, including achieving top rankings in Uganda during Cyberstars 2025 and Bank Heist (H4k-IT), as well as contributing to a global top 100 performance in picoCTF 2025. These experiences have strengthened my ability to think critically under pressure, collaborate effectively, and approach complex security challenges with creativity.</p>
+<p>Beyond competitions, I am actively involved in practical cybersecurity work. I contribute to vulnerability research and testing, including identifying potential issues in live applications such as the Agrix application. I also have experience providing freelance IT support, which has strengthened my understanding of real-world systems and user environments.</p>
+<p>I currently hold certifications including ISC2 Certified in Cybersecurity (CC) and Cisco Ethical Hacker, and I am preparing for CompTIA Security+ to further solidify my foundational and defensive security knowledge.</p>
+<p>My long-term goal is to grow into a well-rounded cybersecurity professional, starting in Security Operations (SOC) and cloud security, while advancing towards my drean careers in red teaming, threat intelligence, and digital forensics.</p>
+<p>I am driven by curiosity, discipline, and a deep interest in understanding how systems work and how they can be secured.
+On this site i will be providing walkthroughs for my journey, challenges i met and how i went about them, ctf walkthroughs, informational writes, project walkthrougs and my achievements in cyber security. for more writes, please follow me on my other sites
+LinkedIn -&gt;
+medium -&gt;
+X.com -&gt;</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="soc-lab-101"><a href="#soc-lab-101" class="header">SOC Lab 101</a></h1>
+<h2 id="security-operation-center-homelab-101"><a class="header" href="#security-operation-center-homelab-101">Security Operation Center Homelab 101</a></h2>
+<p>The goal is to create a soc lab with;</p>
+<ul>
+<li>Security Information and Events manager (i used Wazuh)</li>
+<li>Firewall (used opnsense )</li>
+<li>Ubuntu server</li>
+<li>Attacker machine (used kali linux)</li>
+<li>Host client (ubuntu client)</li>
+</ul>
+<p>The procedures for implementing this kind of setup are many and straight forward so iam going tio skip that.
+After installing and adding all my machines to wazuh.. what i havw to do next is try to give my ubuntu server a service or services that it serves to the clients.</p>
+<p><em>NB</em> I would have used the metasploitable like others, but there wont be a server no more that is as vulnerable as metasploitable. lets try to make it real then.</p>
+<h1 id="creating-customised-attack-surface"><a class="header" href="#creating-customised-attack-surface">Creating customised attack surface.</a></h1>
+<ol>
+<li>Create a database that is accessible from port 80.</li>
+<li>exfiltrate data using the attack box.</li>
+<li>Investigate the attack and harden the system.</li>
+</ol>
+<p>So when creating a database, i used the commands below to setup my environment:</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install mysql-server python3 python3-pip
+pip3 install flask mysql-connector-python
+</code></pre>
+<p>When you run these commands, u might fall into an error as shown in this screenshot:</p>
+<p><img src="images/soc/pip3%20error.png" alt="pip3 error"></p>
+<p>this error can be bypassed by simply using a vitual environment with python modules. this error comes about because of the PEP 668 – a Python enhancement proposal that Debian/Ubuntu adopted to protect your system from YOU (no offense 😄). You might look it out. So below is how i created my virtual environment</p>
+<pre><code class="language-bash">pyhton3 -m venv mysql_db
+source mysql_db/bin/activate
+</code></pre>
+<p>Then u will see that u are in a virtual environment when the prompt changes and then run the pip3 command like so;</p>
+<p><img src="images/soc/prompt_change.png" alt="prompt change"></p>
+<p>after that u will have ur connector installed, now run the following commands to create your server</p>
+<pre><code class="language-bash">sudo mysql
+</code></pre>
+<p>this will start the db and now create a db and input the information as below</p>
+<pre><code class="language-bash">create datbase soc101;
+use soc101;
+create table users (
+    id int auto_increment primary key,
+    username varchar(100),
+    password varchar(100)
+);
+
+insert into users (username,password) values ('admin','password123');
+</code></pre>
+<p>and vwalah… we have a db. U might add users if u want..</p>
+<p>The next step is making this accessible from an application.. so we give it a backend. Below is our python backend code.</p>
+<pre><code class="language-python">from flask import Flask, request
+import mysql.connector 
+
+app = Flask(__name__)
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="labuser",
+    password="labpass",
+    database="soc101"
+
+)
+
+@app.route('/login',methods=['GET'])
+def login():
+    username = request.args.get('username')
+    password = request.args.get('password')
+
+    cursor = db.cursor()
+    query = f"select * from users where username='{username}' and password='{password}'"
+    cursor.execute(query)
+
+    result = cursor.fetchall()
+
+
+    if result:
+        return "Login successful"
+    else:
+        return "Login failed"
+
+app.run(host='0.0.0.0', port=5000)
+</code></pre>
+<p>the service is then accessed by running this in the browser
+http://server-ip:5000/login?username=admin&amp;password=password123</p>
+<p><em>Please try to make sure that you solve the errors you find individually, read them and make reasearch and solve it the way you see fit</em></p>
+<p>So just because we have our db on the server which is an agent to the wazuh, thiss doesnt mean that wazuh will be able to automatically show us the logs from the db nless we explicitly tell it to. Wazuh will only record what u tell it to record.
+I feel like you thought we are done.. buckle up and follow…
+So to make sure that wazuh gets part of all the logs from the database, below is what we need to do.
+Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make the necessary tweaks.</p>
+<pre><code class="language-xml">&lt;ossec_config&gt;
+
+  &lt;!-- ==================== CLIENT CONFIGURATION ==================== --&gt;
+  &lt;client&gt;
+    &lt;server&gt;
+      &lt;address&gt;192.168.56.11&lt;/address&gt;
+      &lt;port&gt;1514&lt;/port&gt;
+      &lt;protocol&gt;tcp&lt;/protocol&gt;
+    &lt;/server&gt;
+    &lt;config-profile&gt;ubuntu, ubuntu24, ubuntu24.04&lt;/config-profile&gt;
+    &lt;notify_time&gt;10&lt;/notify_time&gt;
+    &lt;time-reconnect&gt;60&lt;/time-reconnect&gt;
+    &lt;auto_restart&gt;yes&lt;/auto_restart&gt;
+    &lt;crypto_method&gt;aes&lt;/crypto_method&gt;
+    &lt;enrollment&gt;
+      &lt;enabled&gt;yes&lt;/enabled&gt;
+      &lt;agent_name&gt;server&lt;/agent_name&gt;
+      &lt;groups&gt;Admin&lt;/groups&gt;
+      &lt;authorization_pass_path&gt;etc/authd.pass&lt;/authorization_pass_path&gt;
+    &lt;/enrollment&gt;
+  &lt;/client&gt;
+
+  &lt;client_buffer&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;queue_size&gt;5000&lt;/queue_size&gt;
+    &lt;events_per_second&gt;500&lt;/events_per_second&gt;
+  &lt;/client_buffer&gt;
+
+  &lt;logging&gt;
+    &lt;log_format&gt;json&lt;/log_format&gt;
+  &lt;/logging&gt;
+
+  &lt;!-- ==================== ROOTKIT DETECTION ==================== --&gt;
+  &lt;rootcheck&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;check_files&gt;yes&lt;/check_files&gt;
+    &lt;check_trojans&gt;yes&lt;/check_trojans&gt;
+    &lt;check_dev&gt;yes&lt;/check_dev&gt;
+    &lt;check_sys&gt;yes&lt;/check_sys&gt;
+    &lt;check_pids&gt;yes&lt;/check_pids&gt;
+    &lt;check_ports&gt;yes&lt;/check_ports&gt;
+    &lt;check_if&gt;yes&lt;/check_if&gt;
+    &lt;frequency&gt;43200&lt;/frequency&gt;
+    &lt;rootkit_files&gt;etc/shared/rootkit_files.txt&lt;/rootkit_files&gt;
+    &lt;rootkit_trojans&gt;etc/shared/rootkit_trojans.txt&lt;/rootkit_trojans&gt;
+    &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
+    &lt;ignore&gt;/var/lib/docker&lt;/ignore&gt;
+    &lt;ignore&gt;/var/lib/containerd&lt;/ignore&gt;
+  &lt;/rootcheck&gt;
+
+  &lt;!-- ==================== FILE INTEGRITY MONITORING ==================== --&gt;
+  &lt;syscheck&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;frequency&gt;43200&lt;/frequency&gt;
+    &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
+
+    &lt;!-- Critical system paths --&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/etc&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/bin,/sbin,/usr/bin,/usr/sbin&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/boot&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/root&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/home&lt;/directories&gt;
+
+    &lt;!-- Web + DB --&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/var/www&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/var/lib/mysql&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/etc/mysql&lt;/directories&gt;
+
+    &lt;!-- SSH --&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/etc/ssh&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/home/*/.ssh&lt;/directories&gt;
+
+    &lt;!-- Cron (persistence detection) --&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/etc/cron*&lt;/directories&gt;
+    &lt;directories check_all="yes" realtime="yes"&gt;/var/spool/cron&lt;/directories&gt;
+
+    &lt;ignore&gt;/etc/mtab&lt;/ignore&gt;
+    &lt;ignore type="sregex"&gt;.log$|.swp$|.tmp$&lt;/ignore&gt;
+    &lt;nodiff&gt;/etc/ssl/private.key&lt;/nodiff&gt;
+
+    &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
+    &lt;skip_dev&gt;yes&lt;/skip_dev&gt;
+    &lt;skip_proc&gt;yes&lt;/skip_proc&gt;
+    &lt;skip_sys&gt;yes&lt;/skip_sys&gt;
+
+    &lt;process_priority&gt;10&lt;/process_priority&gt;
+    &lt;max_eps&gt;50&lt;/max_eps&gt;
+
+    &lt;synchronization&gt;
+      &lt;enabled&gt;yes&lt;/enabled&gt;
+      &lt;interval&gt;5m&lt;/interval&gt;
+      &lt;max_eps&gt;10&lt;/max_eps&gt;
+    &lt;/synchronization&gt;
+  &lt;/syscheck&gt;
+
+  &lt;!-- ==================== SYSTEM COLLECTOR ==================== --&gt;
+  &lt;wodle name="syscollector"&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;interval&gt;1h&lt;/interval&gt;
+    &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
+    &lt;hardware&gt;yes&lt;/hardware&gt;
+    &lt;os&gt;yes&lt;/os&gt;
+    &lt;network&gt;yes&lt;/network&gt;
+    &lt;packages&gt;yes&lt;/packages&gt;
+    &lt;ports all="yes"&gt;yes&lt;/ports&gt;
+    &lt;processes&gt;yes&lt;/processes&gt;
+  &lt;/wodle&gt;
+
+  &lt;!-- ==================== SCA ==================== --&gt;
+  &lt;sca&gt;
+    &lt;enabled&gt;yes&lt;/enabled&gt;
+    &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
+    &lt;interval&gt;12h&lt;/interval&gt;
+    &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
+  &lt;/sca&gt;
+
+  &lt;!-- ==================== LOG COLLECTION (OPTIMIZED) ==================== --&gt;
+
+  &lt;!-- SYSTEM (keep minimal since journald is enabled) --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/auth.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/kern.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- JOURNALD (PRIMARY SOURCE) --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;journald&lt;/log_format&gt;
+    &lt;location&gt;journald&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- FIREWALL --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/ufw.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- WEB --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/apache2/access.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/apache2/error.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/nginx/access.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/nginx/error.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- DATABASE --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;mysql_log&lt;/log_format&gt;
+    &lt;location&gt;/var/log/mysql/error.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- DOCKER --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;json&lt;/log_format&gt;
+    &lt;location&gt;/var/lib/docker/containers/*/*.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- CUSTOM APP --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/log/flask_app.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- WAZUH INTERNAL --&gt;
+  &lt;localfile&gt;
+    &lt;log_format&gt;syslog&lt;/log_format&gt;
+    &lt;location&gt;/var/ossec/logs/active-responses.log&lt;/location&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- ==================== COMMAND MONITORING ==================== --&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;command&lt;/log_format&gt;
+    &lt;command&gt;df -P&lt;/command&gt;
+    &lt;frequency&gt;360&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;full_command&lt;/log_format&gt;
+    &lt;command&gt;ss -tulpn&lt;/command&gt;
+    &lt;alias&gt;listening ports&lt;/alias&gt;
+    &lt;frequency&gt;300&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;full_command&lt;/log_format&gt;
+    &lt;command&gt;ps auxwf&lt;/command&gt;
+    &lt;alias&gt;process list&lt;/alias&gt;
+    &lt;frequency&gt;300&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;full_command&lt;/log_format&gt;
+    &lt;command&gt;last -n 50&lt;/command&gt;
+    &lt;alias&gt;login history&lt;/alias&gt;
+    &lt;frequency&gt;600&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;full_command&lt;/log_format&gt;
+    &lt;command&gt;who&lt;/command&gt;
+    &lt;alias&gt;current users&lt;/alias&gt;
+    &lt;frequency&gt;120&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;localfile&gt;
+    &lt;log_format&gt;full_command&lt;/log_format&gt;
+    &lt;command&gt;lsof -i -n -P&lt;/command&gt;
+    &lt;alias&gt;open sockets&lt;/alias&gt;
+    &lt;frequency&gt;600&lt;/frequency&gt;
+  &lt;/localfile&gt;
+
+  &lt;!-- ==================== ACTIVE RESPONSE ==================== --&gt;
+  &lt;active-response&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;ca_store&gt;etc/wpk_root.pem&lt;/ca_store&gt;
+    &lt;ca_verification&gt;yes&lt;/ca_verification&gt;
+  &lt;/active-response&gt;
+
+  &lt;!-- ==================== AUDITD (ENHANCED) ==================== --&gt;
+  &lt;wodle name="audit"&gt;
+    &lt;disabled&gt;no&lt;/disabled&gt;
+    &lt;interval&gt;1m&lt;/interval&gt;
+
+    &lt;!-- Execution --&gt;
+    &lt;audit_rule&gt; -a always,exit -S execve -k process_execution&lt;/audit_rule&gt;
+
+    &lt;!-- Root commands --&gt;
+    &lt;audit_rule&gt; -a always,exit -F arch=b64 -S execve -F euid=0 -k privileged_commands&lt;/audit_rule&gt;
+
+    &lt;!-- File access --&gt;
+    &lt;audit_rule&gt; -a always,exit -S open,openat -k file_access&lt;/audit_rule&gt;
+
+    &lt;!-- Network --&gt;
+    &lt;audit_rule&gt; -a always,exit -S connect,accept -k network_connections&lt;/audit_rule&gt;
+
+    &lt;!-- SSH --&gt;
+    &lt;audit_rule&gt; -w /etc/ssh/sshd_config -p wa -k ssh_config&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /root/.ssh/authorized_keys -p wa -k ssh_keys&lt;/audit_rule&gt;
+
+    &lt;!-- Sudo --&gt;
+    &lt;audit_rule&gt; -w /etc/sudoers -p wa -k sudoers_changes&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /etc/sudoers.d -p wa -k sudoers_changes&lt;/audit_rule&gt;
+
+    &lt;!-- Users --&gt;
+    &lt;audit_rule&gt; -w /etc/passwd -p wa -k user_changes&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /etc/shadow -p wa -k user_changes&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /etc/group -p wa -k user_changes&lt;/audit_rule&gt;
+
+    &lt;!-- Cron --&gt;
+    &lt;audit_rule&gt; -w /etc/cron.allow -p wa -k cron&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /etc/cron.deny -p wa -k cron&lt;/audit_rule&gt;
+    &lt;audit_rule&gt; -w /etc/crontab -p wa -k cron&lt;/audit_rule&gt;
+
+  &lt;/wodle&gt;
+
+&lt;/ossec_config&gt;
+</code></pre>
+<p>then after, apply all the logs to the system.. run the following commands.. on the linux agent.</p>
+<pre><code class="language-bash"># 1. Backup current config
+sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.backup
+
+# 2. Edit the file with the new configuration above
+sudo nano /var/ossec/etc/ossec.conf
+
+# 3. Enable MySQL logging (if not already)
+sudo mysql -e "SET GLOBAL general_log = 'ON';"
+sudo mysql -e "SET GLOBAL log_output = 'FILE';"
+sudo mysql -e "SET GLOBAL general_log_file = '/var/log/mysql/mysql.log';"
+
+# 4. Create MySQL log directory if needed
+sudo mkdir -p /var/log/mysql
+sudo chown mysql:mysql /var/log/mysql
+sudo chmod 750 /var/log/mysql
+
+# 5. Restart Wazuh agent
+sudo systemctl restart wazuh-agent
+
+# 6. Check for errors
+sudo tail -f /var/ossec/logs/ossec.log
+</code></pre>
+<p>after this.. we need to check with the siem and see if we are collecting the neccessary logs.
+Lets fst fine tune the Wazuh into more of a security tool.</p>
+<p>I will start with the dashboards section under the Explore pane.</p>
+<p><img src="images/soc/explore.png" alt="Explore section"></p>
+<p>As u can see there, navigate to the dashboards section and follow the following instructions. iam using version 4.14.
+We are building a A dashboard that shows in real-time any access to;</p>
+<ul>
+<li>sudo privileges</li>
+<li>Successful or unsuccessful ssh and the username</li>
+<li>Any access to the /etc/passed and /etc/shadow files.
+this is what we are going to fst deal with, thenescalate slowly.
+We shall fst use a pichart, then a metric and a table for this.. buckel up!!</li>
+</ul>
+<p>In the explore section, select dashboards -&gt; create new and in the table, select the piechat.</p>
+<p><img src="images/soc/dashboard.png" alt="pie chat"></p>
+<p>Select the source as wazuh alerts. After that, we shall do most of the work from the left hand side. The pie chat is going to be showing the privilege mode access rate.
+So in the left pane, select aggregation mode as counts in the metrics tab and below in the custom name, i will name mine privileged alerts. u can use any name u see fit.
+Under the buckets, select the aggregation as terms and then add fields. to add fields, u have to fst know the available fiels for the data that u want to be visualised. so in this case we shall go discover and see what important data relates to prvileges. that is the data that we shall use in the fields.
+In the discovery field, in the search pane, serach for anything related to privileges <em>sudo</em>
+Then to the fst event, minimise it in order to be able to see the available fields that might interest you.
+I used my data field as <em>rule.mitre.technique</em> and this will help me see quite a number of things as shwon in the screenshort below.</p>
+<p><img src="images/soc/piechart.png" alt="pie_chart"></p>
+<p>so now we want to be able to see the count of the data that we are getting on our servers. how many hits e get in a day that relate to the technique and the tactic.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="enterprise-networking"><a href="#enterprise-networking" class="header">Enterprise Networking</a></h1>
+<h2 id="projects"><a class="header" href="#projects">Projects</a></h2>
+<h2 id="lab101"><a class="header" href="#lab101">Lab101</a></h2>
+<p><img src="images/enterprise_networking/EP101.png" alt="Network topology"></p>
+<p>This is the topology. We are creating a simple vlan network.
+The target is to make the core switch the VLAN server to all the rest of the switches, make the different vlans communicate to each other through the router. is the procedure.</p>
+<h1 id="trunking"><a class="header" href="#trunking">Trunking</a></h1>
+<pre><code class="language-text">en 
+conf t
+hostname Core_Switch
+
+vlan 10
+name IT
+vlan 20
+name sales
+
+int vlan 10
+no shut 
+ip address 192.0.0.100 255.255.255.0
+
+int vlan 20
+no shut
+ip address 193.0.0.100 255.255.255.0
+</code></pre>
+<p>now this is to set up the environment. Trunking is the process of making a switch port transport data instead of using it for access. this means that if u plug a computer or any end device into this port, it will not get the connection but instead the network will be moved to another node… any node u add. Simply making a port a road for the coming data instead of the packing.
+below is the command</p>
+<pre><code class="language-text">In configuration mode of the switch run;
+int f0/1
+switchport mode trunk
+no shut 
+exit 
+
+int f0/2
+switchport mode trunk
+no shut
+
+do write
+</code></pre>
+<p><em>Replace the interfaces with the respective interfaces connected to the switches and the ports u want to trunk.</em>
+This is done on all the switches that had to act as trunks for the data.</p>
+<h1 id="creating-the-vtp-domain-vlan-trunking-protocol"><a class="header" href="#creating-the-vtp-domain-vlan-trunking-protocol">Creating the VTP domain (VLAN Trunking Protocol)</a></h1>
+<p>The VTP is used to automatically distribute and synchronize VLAN configuration information across multiple switches within the same VTP domain. Instead of manually creating VLANs on every switch, VTP allows you to create, delete, or modify VLANs on one switch (usually in server mode), and those changes are propagated to other switches, ensuring consistency and reducing administrative effort.
+Below are the commands used</p>
+<p><em>on the core switch</em></p>
+<pre><code class="language-text">vtp domain UTHMAN
+vtp mode server
+</code></pre>
+<p>This makes the core switch the overall server</p>
+<p><em>on the other switches</em></p>
+<pre><code class="language-text">vtp domain UTHMAN
+vtp mode client
+</code></pre>
+<p>this makes the rest of the switches be slaves or be controlled by the server. This means that the configurations u make from the core switch, will be implemented throughout.</p>
+<p>After this, we move to the router.
+In the router, we have to make sure that the computers connected to the different switches, with the neceesary configurations on the switch port, they can autoatically be assigned the respective ip addresses. below are the commands.</p>
+<pre><code class="language-text">no
+en
+conf t
+int f0/0
+no shut 
+
+int f0/0.10
+encapsulation dot1q 10
+ip address 192.0.0.100 255.255.255.0
+no shut
+ip dhcp pool IT
+network 192.0.0.0 255.255.255.0
+
+int f0/0.20
+encapsulation dot1q 20
+ip address 193.0.0.100 255.255.255.0
+no shut
+ip dhcp pool sales
+network 192.0.0.0 255.255.255.0
+</code></pre>
+<p>lets test. On either of our switches, connect a computer as shown here..</p>
+<p><img src="images/enterprise_networking/EP102.png" alt="connecting the PCs"></p>
+<p>Then run the following commands on the switch port that u have connected your computer
+<em>Use the copper straighthrough cable</em></p>
+<pre><code class="language-text">en
+conf t
+int f0/3
+switchport mode access vlan 10
+do write
+</code></pre>
+<p>after that u check the computer following this step.
+Go to computer -&gt; desktop -&gt; IP configuration -&gt; dhcp
+and u will get an IP as below.</p>
+<p><img src="images/enterprise_networking/EP103.png" alt="IP configuration"></p>
+<p>And there, You successfully have configures a VLAN. Now lets check if the VLANs dont communicate. follow the same steps and this time round assign the port on a different switch a different VLAN. And then after getting an IP address, navigate to the command prompt and ping another computer. The two computers should not be communicating.</p>
+<p><img src="images/enterprise_networking/EP104.png" alt="ICMP"></p>
+<p>As u see the two computers dont communicate. So to make them communicate, we should give them a gateway. navigate to the router and use the following commands to configure <em>inter-VLAN routing</em></p>
+<pre><code class="language-text">en
+conf t
+int f0/1
+no shut
+ip address 195.0.0.100 255.255.255.0
+ip dhcp pool IT
+192.0.0.0 255.255.255.0
+ip dhcp pool sales
+network 192.0.0.0 255.255.255.0
+default-router 195.0.0.100 255.255.255.0
+do write
+</code></pre>
+<p>And if u ping this time round, they should be able to communicate through the router.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
