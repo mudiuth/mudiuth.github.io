@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>The Author - Soc HomeLab</title>
+        <title>Etherchannel configuration - Soc HomeLab</title>
 
 
         <!-- Custom HTML head -->
@@ -174,38 +174,47 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="about-the-author"><a class="header" href="#about-the-author">About the author</a></h2>
-<p><img src="./images/me/author.jpeg" alt="Author"></p>
-<p>I am a cybersecurity student at ISBAT University with a strong passion for offensive security, threat analysis, and digital forensics. My journey into cybersecurity has been driven by hands-on experience, competitive problem-solving, and continuous learning through real-world simulations and Capture The Flag (CTF) competitions.</p>
-<p>I am an active CTF player and a core member of the L0C41M3N team, frequently competing under the <a href="https://uguntu.com/">Uguntu</a> cybersecurity community, one of the leading cybersecurity groups in Uganda. Through these platforms, I have developed solid practical skills in red teaming, web exploitation, and vulnerability analysis.</p>
-<p>My experience includes high-level performance in both individual and team-based competitions. Notably, I ranked among the top competitors in multiple regional and global CTFs, including achieving top rankings in Uganda during Cyberstars 2025 and Bank Heist (H4k-IT), as well as contributing to a global top 100 performance in picoCTF 2025. These experiences have strengthened my ability to think critically under pressure, collaborate effectively, and approach complex security challenges with creativity.</p>
-<p>Beyond competitions, I am actively involved in practical cybersecurity work. I contribute to vulnerability research and testing, including identifying potential issues in live applications such as the Agrix application. I also have experience providing freelance IT support, which has strengthened my understanding of real-world systems and user environments.</p>
-<p>I currently hold certifications including ISC2 Certified in Cybersecurity (CC) and Cisco Ethical Hacker, and I am preparing for CompTIA Security+ to further solidify my foundational and defensive security knowledge.</p>
-<p>My long-term goal is to grow into a well-rounded cybersecurity professional, starting in Security Operations (SOC) and cloud security, while advancing towards my drean careers in red teaming, threat intelligence, and digital forensics.</p>
-<p>I am driven by curiosity, discipline, and a deep interest in understanding how systems work and how they can be secured.
-On this site i will be providing walkthroughs for my journey, challenges i met and how i went about them, ctf walkthroughs, informational writes, project walkthrougs and my achievements in cyber security. for more writes, please follow me on my other sites</p>
+                        <h2 id="configuring-etherchannel"><a class="header" href="#configuring-etherchannel">Configuring etherchannel</a></h2>
+<p>Ether channel is the process of combining two physical ports and making them work as one. Below is my topology.
+<img src="./images/etherchannel/topology.png" alt="topology"></p>
+<p>We have 3 different switches and two different PCs. The PCs should communicate with no loss.
+Below are the commands to be run in each of the switches.</p>
+<pre><code class="language-text">int range f0/1-2
+channel-protocol lacp
+channel-group 1 mode active
+
+int port-channel 1
+switchport mode trunk 
+spanning-tree portfast
+
+int range f0/3-4
+channel-protocol lacpp
+channel-group 2 mode active
+
+int port-channel 2
+switchport mode trunk 
+spanning-tree portfast
+</code></pre>
+<p>Please be mindful about the ports. U might want to repeat the command for each ports in the range if the ports are not continuous. We only use the <strong>range</strong> command only when the ports are continuous.</p>
+<h1 id="commands-explained"><a class="header" href="#commands-explained">Commands explained.</a></h1>
 <ul>
-<li><a href="https://www.linkedin.com/in/sseluwooza-uthman">LinkedIn</a></li>
-<li><a href="https://medium.com/@mudiuth">Medium</a></li>
-<li><a href="https://x.com/MudiUth">X.com</a></li>
-<li><a href="https://profile.hackthebox.com/profile/019dc4c0-9616-7115-af3d-5d556f978299">Hack the box</a></li>
-<li><a href="https://tryhackme.com/p/uthmanmudi">Tryhackme</a></li>
+<li><strong>int range <port range=""></port></strong>: This is used to combine a range of continous ports and configure them at once.</li>
+<li><strong>channel-protocol lacp</strong> This is used to chose the protocol to be used for the configuration. CISCO has two different protocols for etherchannel connection ie lacp (Link Aggregation Control Protocol which is the standard protocol) and PAgP (Port Aggregataion Protocaol. This is Cisco proprietry protocol)</li>
+<li><strong>channel-group <number> mode active</number></strong>: It adds the interface to an EtherChannel and enables LACP in active mode to actively negotiate the bundle</li>
+<li><strong>int port-channel <bundle number=""></bundle></strong>: This enters the port for other configurations.</li>
 </ul>
-<h2 id="credentials-and-certificates"><a class="header" href="#credentials-and-certificates">Credentials and certificates</a></h2>
-<p>Below are the credentials that i have managed to collect throughout my cyber security jorney in order to certisfy my expertise.</p>
-<div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
-  <img src="./images/certs/ISC2.jpeg" alt="ISC2 Certified in Cybersecurity" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <img src="./images/certs/ethical-hacker.png" alt="Cisco Ethical Hacker" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <img src="./images/certs/isc2-candidate.png" alt="ISC2 candidate" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <!-- add more badges here -->
-</div>
+<p><em>the rest of the commands are discussed in enterprise networking</em></p>
+<h1 id="why-use-the-etherchannel-configuration-for-the-network"><a class="header" href="#why-use-the-etherchannel-configuration-for-the-network">Why use the etherchannel configuration for the network.</a></h1>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="enterprise_networking.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
 
-                            <a rel="next prefetch" href="SOC_lab101.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="Authentication_Authorisation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -215,8 +224,11 @@ On this site i will be providing walkthroughs for my journey, challenges i met a
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="enterprise_networking.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
 
-                    <a rel="next prefetch" href="SOC_lab101.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="Authentication_Authorisation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

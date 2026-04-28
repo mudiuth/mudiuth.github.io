@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>The Author - Soc HomeLab</title>
+        <title>CAS walkthrough - Soc HomeLab</title>
 
 
         <!-- Custom HTML head -->
@@ -174,40 +174,104 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="about-the-author"><a class="header" href="#about-the-author">About the author</a></h2>
-<p><img src="./images/me/author.jpeg" alt="Author"></p>
-<p>I am a cybersecurity student at ISBAT University with a strong passion for offensive security, threat analysis, and digital forensics. My journey into cybersecurity has been driven by hands-on experience, competitive problem-solving, and continuous learning through real-world simulations and Capture The Flag (CTF) competitions.</p>
-<p>I am an active CTF player and a core member of the L0C41M3N team, frequently competing under the <a href="https://uguntu.com/">Uguntu</a> cybersecurity community, one of the leading cybersecurity groups in Uganda. Through these platforms, I have developed solid practical skills in red teaming, web exploitation, and vulnerability analysis.</p>
-<p>My experience includes high-level performance in both individual and team-based competitions. Notably, I ranked among the top competitors in multiple regional and global CTFs, including achieving top rankings in Uganda during Cyberstars 2025 and Bank Heist (H4k-IT), as well as contributing to a global top 100 performance in picoCTF 2025. These experiences have strengthened my ability to think critically under pressure, collaborate effectively, and approach complex security challenges with creativity.</p>
-<p>Beyond competitions, I am actively involved in practical cybersecurity work. I contribute to vulnerability research and testing, including identifying potential issues in live applications such as the Agrix application. I also have experience providing freelance IT support, which has strengthened my understanding of real-world systems and user environments.</p>
-<p>I currently hold certifications including ISC2 Certified in Cybersecurity (CC) and Cisco Ethical Hacker, and I am preparing for CompTIA Security+ to further solidify my foundational and defensive security knowledge.</p>
-<p>My long-term goal is to grow into a well-rounded cybersecurity professional, starting in Security Operations (SOC) and cloud security, while advancing towards my drean careers in red teaming, threat intelligence, and digital forensics.</p>
-<p>I am driven by curiosity, discipline, and a deep interest in understanding how systems work and how they can be secured.
-On this site i will be providing walkthroughs for my journey, challenges i met and how i went about them, ctf walkthroughs, informational writes, project walkthrougs and my achievements in cyber security. for more writes, please follow me on my other sites</p>
-<ul>
-<li><a href="https://www.linkedin.com/in/sseluwooza-uthman">LinkedIn</a></li>
-<li><a href="https://medium.com/@mudiuth">Medium</a></li>
-<li><a href="https://x.com/MudiUth">X.com</a></li>
-<li><a href="https://profile.hackthebox.com/profile/019dc4c0-9616-7115-af3d-5d556f978299">Hack the box</a></li>
-<li><a href="https://tryhackme.com/p/uthmanmudi">Tryhackme</a></li>
-</ul>
-<h2 id="credentials-and-certificates"><a class="header" href="#credentials-and-certificates">Credentials and certificates</a></h2>
-<p>Below are the credentials that i have managed to collect throughout my cyber security jorney in order to certisfy my expertise.</p>
-<div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
-  <img src="./images/certs/ISC2.jpeg" alt="ISC2 Certified in Cybersecurity" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <img src="./images/certs/ethical-hacker.png" alt="Cisco Ethical Hacker" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <img src="./images/certs/isc2-candidate.png" alt="ISC2 candidate" style="width:120px; height:120px; object-fit:cover; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);" />
-  <!-- add more badges here -->
-</div>
+                        <h2 id="ctf-africa-summit-cas-walkthrough"><a class="header" href="#ctf-africa-summit-cas-walkthrough">CTF Africa Summit (CAS) walkthrough</a></h2>
+<h1 id="recon"><a class="header" href="#recon">Recon</a></h1>
+<p>Always the fst phase. I ran an nmap scan and below is what i got.</p>
+<pre><code class="language-text">nmap -sC -sV 10.241.20.42                                                                              
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-27 00:09 +0300
+Nmap scan report for 10.241.20.42
+Host is up (0.16s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT     STATE SERVICE VERSION
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+3306/tcp open  mysql   MySQL 5.7.33-0ubuntu0.16.04.1
+|_ssl-date: TLS randomness does not represent time
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.7.33-0ubuntu0.16.04.1
+|   Thread ID: 8
+|   Capabilities flags: 65535
+|   Some Capabilities: Speaks41ProtocolNew, Support41Auth, SupportsCompression, SupportsLoadDataLocal, LongPassword, SupportsTransactions, ConnectWithDatabase, IgnoreSigpipes, Speaks41ProtocolOld, InteractiveClient, SwitchToSSLAfterHandshake, DontAllowDatabaseTableColumn, FoundRows, IgnoreSpaceBeforeParenthesis, ODBCClient, LongColumnFlag, SupportsMultipleStatments, SupportsMultipleResults, SupportsAuthPlugins
+|   Status: Autocommit
+|   Salt: is\x17J\x13\x1E7v\x12MtU\x11\x16\x14hP&amp;J\x1E
+|_  Auth Plugin Name: mysql_native_password
+| ssl-cert: Subject: commonName=MySQL_Server_5.7.33_Auto_Generated_Server_Certificate
+| Not valid before: 2026-03-27T07:52:18
+|_Not valid after:  2036-03-24T07:52:18
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 44.14 seconds
+</code></pre>
+<p>The machine is having two open ports. One is for web and anotherone is the database. Lets get to the web and see what we can get for ourselves.</p>
+<p>Below is what i found at the page.</p>
+<p><img src="./images/CAS/opening%20the%20server.png" alt="opening image"></p>
+<p>Well theres literally nothing much. At looking at this, i decided to check on the machine’s robots.txt for some important files. Remember it is what the developers use to disallow crawlers from accessing important files. Below are some of the content of the robots.txt its where i found the fst flag.
+<img src="./images/CAS/robots.png" alt="robots">
+well the flag is base64 encoded.Lets decode and submit.</p>
+<pre><code class="language-bash">echo "TmV0aGVybGFuZHMgRmxhZzogYjI1ZjczNTAyYjg2MmVjZTJjYTRjMzliZmU0YTU3M2Q=" | base64 -d
+</code></pre>
+<p>this command will give you the file.</p>
+<p>So after, the content of the robots.txt seemed interesting. So i gothered all of them and decided to make a wordlist for a directory bruteforce. I copied all the content, pasted in a file, and then ran this command to remove the allow.</p>
+<pre><code class="language-bash">grep "^Allow:" robots.txt | cut -d' ' -f2 &gt; directories.txt
+</code></pre>
+<p>So after, i made a directory bruteforce and found only one folder that was redirected.</p>
+<p><img src="./images/CAS/ffuf.png" alt="bruteforce"></p>
+<p>I navigated to the page and it landed us on this page with my best DC characters</p>
+<p><img src="./images/CAS/CAS.png" alt="suicide squad"></p>
+<p>I found the flag in the source code when i pressed ctrl + u on firefox.</p>
+<p><img src="./images/CAS/src.png" alt="sorce"></p>
+<p>The flag was commented as an encoded comment. So i had to decode it.</p>
+<p><em>3 flags to go.. hmmm!</em></p>
+<p>After trying and fuzzing all possible ways, even tried bruteforcing a captcha, i realise that the website had a file inclusion vulnerability. and this was a break through. I decided to check the configuration file. When u append the <strong>.php</strong> u might get nothig, but when u visit the <strong>config</strong> as shown below, this will give u something interesting.</p>
+<p><img src="./images/CAS/file%20inclusion.png" alt="file inclusion"></p>
+<p>whenu decode the encoded text, u will get he flag
+<strong>Decode the encoded text twice</strong>
+<img src="./images/CAS/decode.png" alt="decode"></p>
+<p>That gave us the 3rd flag. So we had two remaining.
+Kept looking for different files in the server and till i got to some directory that looked like an encoded or hashed string. When u navigate to the member end point, below is what i got.</p>
+<pre><code class="language-bash">curl "http://10.241.20.42/CTF_AFRICA_SUMMIT_2026/?page=php://filter/convert.base64-encode/resource=member"
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;CTF Intranet Image Hosting&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;
+&lt;img src="images/CTF_CERT-01.png"&gt;&lt;br /&gt;
+&lt;hr&gt;
+[ &lt;a href="/CTF_AFRICA_SUMMIT_2026"&gt;Home&lt;/a&gt; ] [ &lt;a href="?page=flag"&gt;Flag&lt;/a&gt; ] [ &lt;a href="?page=login"&gt;Login&lt;/a&gt; ] [ &lt;a href="?page=member"&gt;Member Area&lt;/a&gt; ]
+&lt;hr/&gt;&lt;br/&gt;
+PD9waHAKc2Vzc2lvbl9zdGFydCgpOwppZiAoIWlzc2V0KCRfU0VTU0lPTlsndXNlciddKSkgeyBkaWUoJ1lvdSBtdXN0IGJlIGxvZyBpbi4nKTsgfQo/Pgo8aHRtbD4KCTxib2R5PgoJCTxhIGhyZWY9Ii9DVEZfQUZSSUNBX1NVTU1JVF8yMDI2LzMyMmZjMzQ5MzZjNzBkNGM4MWJhMDExYzZiYWM3ZGYzL19fU3Vja2VyIGZvciBQYWluX18iPlN1Y2tlciBmb3IgUGFpbjwvYT4KCTwvYm9keT4KPC9odG1sPgo=&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>when i decoded the string, i found some endpoint that was leading to an achieved file as shown in the screen shot.
+<img src="./images/CAS/sucker.png" alt="sucker"></p>
+<p>I downloaded this file and in the file is where the other flag was located.</p>
+<p>The last flag was located in an image. She is the most pathetic character in the whole of DC i believe. Comic guys can relate. <strong>Hailey</strong>.
+<img src="./images/CAS/Harley.jpg" alt="Hailey">
+So in its meta data was the hint for the flag. When u use exiftool, there is a random string that u see.</p>
+<p><img src="./images/CAS/random.png" alt="meta"></p>
+<p>This data is so very much random than what we might want to expect.
+The string is obfuscated using ROT13. and it was pointing to the flag. when decoded, it would make;</p>
+<pre><code class="language-text">Kenya Flag = md5("$country" . "$city" . "Summit")d
+</code></pre>
+<p>So we had to get these details and then create an md5 hash. That would be our flag.
+country -&gt; Kenya
+City -&gt; Nirobi
+Summit -&gt; summit
+so if hash these using md5, we get the flag.</p>
+<p>Thanl you for reading. For more solutions, refer to my <a href="https://medium.com/@mudiuth">medium</a> accout.
+<strong>L0C4L_M3N</strong></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-
-                            <a rel="next prefetch" href="SOC_lab101.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            <a rel="prev" href="Authentication_Authorisation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
+
 
                         <div style="clear: both"></div>
                     </nav>
@@ -215,10 +279,10 @@ On this site i will be providing walkthroughs for my journey, challenges i met a
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-
-                    <a rel="next prefetch" href="SOC_lab101.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    <a rel="prev" href="Authentication_Authorisation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
+
             </nav>
 
         </div>

