@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-6384d84c.js";
+            window.path_to_searchindex_js = "searchindex-58911ff0.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c56f5554.js"></script>
@@ -205,6 +205,92 @@ spanning-tree portfast
 </ul>
 <p><em>the rest of the commands are discussed in enterprise networking</em></p>
 <h1 id="why-use-the-etherchannel-configuration-for-the-network"><a class="header" href="#why-use-the-etherchannel-configuration-for-the-network">Why use the etherchannel configuration for the network.</a></h1>
+<p>Ether-channel is usually used in networks to improve reliability, perfomance and scalability in a network. Below are some of the major importances of this configuration</p>
+<ul>
+<li><strong>Bandwidth usage</strong>. 4 links that have 1Gbps connected together give about 4Gbps which is faster and bigger.</li>
+<li><strong>Fault tolerance and redundancy</strong>. Once one links fails, the other link will take the traffic and the client will barely know that the link is faulty.</li>
+<li><strong>Spanning tree blocking</strong>. STP treats all the links that are involved as one thus avoiding unnecessary blocking.</li>
+<li><strong>Load balancing</strong>. Since traffic is shared across all the included interfaces.</li>
+<li><strong>Simplifies network management</strong>. For example when configuring, u configure one logical port instead of different ports</li>
+</ul>
+<h2 id="tunneling"><a class="header" href="#tunneling">Tunneling.</a></h2>
+<p>This is the process of creating a leased link for communication between two different locations.</p>
+<h1 id="topology"><a class="header" href="#topology">Topology</a></h1>
+<p><img src="./images/etherchannel/tunnel_topology.png" alt="tunnel"></p>
+<p><strong>The black rod represents the tunnle</strong>
+Below are the commands that u can run in each of the routers to implement the tunnle.</p>
+<pre><code class="language-text">router1
+en
+conf t
+int f0/0
+no shut 
+ip address 192.0.0.100 255.255.255.0
+exit
+int f0/1
+ip address 50.0.0.1 255.0.0.0
+no shut
+exit
+int tunnel 0
+tunnel destination 75.0.0.2
+tunnel source f0/1
+ip address 1.1.1.1 255.0.0.0
+exit
+router rip
+network 50.0.0.0
+network 192.0.0.0
+exit
+ip dhcp pool test1
+network 192.0.0.0 255.255.255.0
+default-router 192.0.0.100
+exit
+do write
+</code></pre>
+<p><strong>the IP addressing is based on my own topology, feel free to use ur own</strong></p>
+<pre><code class="language-text">for router2
+en
+conf t
+int f0/0
+no shut 
+ip address 75.0.0.2 255.0.0.0
+exit
+int f0/1
+ip address 180.0.0.50 255.255.0.0
+no shut
+exit
+int tunnel 0
+tunnel destination 50.0.0.1
+tunnel source f0/0
+ip address 1.1.1.2 255.0.0.0
+exit
+router rip
+network 75.0.0.2
+network 180.0.0.0
+exit
+ip dhcp pool test1
+network 180.0.0.0 255.255.0.0
+default-router 180.0.0.50
+exit
+do write
+</code></pre>
+<p>finally fro router0</p>
+<pre><code class="language-text">en
+conf t
+int f0/0
+no shut
+ip address 50.0.0.2 255.0.0.0
+exit
+int f0/1
+no shut
+ip address 75.0.0.1
+exit
+router rip
+network 50.0.0.0
+network 75.0.0.0
+exit
+do write
+</code></pre>
+<p>After doing all this, the next thing to be done is testing if it works.. we shall use a <code>text tracert &lt;destinationIP&gt;</code> command to see if it is our tunnel is included in the route.
+Go to any of the PCs ie: PC0 or PC1, make sure it has an ip address in the configuration, then navigate to the terminal and run the command as shown below.</p>
 
                     </main>
 
