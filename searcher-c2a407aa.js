@@ -437,11 +437,7 @@ window.search = window.search || {};
         if (yes) {
             loadSearchScript(
                 window.path_to_searchindex_js ||
-<<<<<<< HEAD
                 path_to_root + 'searchindex-2b53a200.js',
-=======
-                path_to_root + 'searchindex-58911ff0.js',
->>>>>>> 778606cb89bc16da278ca64d8b3f5831fcca5476
                 'mdbook-search-index');
             search_wrap.classList.remove('hidden');
             searchicon.setAttribute('aria-expanded', 'true');
