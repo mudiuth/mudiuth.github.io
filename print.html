@@ -36,7 +36,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-2b53a200.js";
+            window.path_to_searchindex_js = "searchindex-3288dee9.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c56f5554.js"></script>
@@ -215,55 +215,64 @@
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="soc-lab-101"><a href="#soc-lab-101" class="header">SOC Lab 101</a></h1>
-<h2 id="security-operation-center-homelab-101"><a class="header" href="#security-operation-center-homelab-101">Security Operation Center Homelab 101</a></h2>
-<p>The goal is to create a soc lab with;</p>
+<h2 id="security-operations-center-homelab-101"><a class="header" href="#security-operations-center-homelab-101">Security Operations Center Homelab 101</a></h2>
+<p>The goal of this lab is to build a functional SOC environment from scratch. Here is what we are working with:</p>
 <ul>
-<li>Security Information and Events manager (i used Wazuh)</li>
-<li>Firewall (used opnsense )</li>
-<li>Ubuntu server</li>
-<li>Attacker machine (used kali linux)</li>
-<li>Host client (ubuntu client)</li>
+<li><strong>SIEM:</strong> Wazuh</li>
+<li><strong>Firewall:</strong> OPNsense</li>
+<li><strong>Ubuntu Server</strong> (the target machine)</li>
+<li><strong>Attacker Machine:</strong> Kali Linux</li>
+<li><strong>Host Client:</strong> Ubuntu Client</li>
 </ul>
-<p>The procedures for implementing this kind of setup are many and straight forward so iam going tio skip that.
-After installing and adding all my machines to wazuh.. what i havw to do next is try to give my ubuntu server a service or services that it serves to the clients.</p>
-<p><em>NB</em> I would have used the metasploitable like others, but there wont be a server no more that is as vulnerable as metasploitable. lets try to make it real then.</p>
-<h1 id="creating-customised-attack-surface"><a class="header" href="#creating-customised-attack-surface">Creating customised attack surface.</a></h1>
+<p>The installation and setup process for each of these machines is straightforward and well documented, so I will skip that part and jump straight into what makes this lab interesting.</p>
+<blockquote>
+<p><strong>Why not Metasploitable?</strong> Most SOC homelabs use Metasploitable as the vulnerable target. I chose not to, because a machine that broken does not reflect anything close to a real environment. We are going to build our own attack surface instead.</p>
+</blockquote>
+<hr>
+<h2 id="creating-a-customised-attack-surface"><a class="header" href="#creating-a-customised-attack-surface">Creating a Customised Attack Surface</a></h2>
+<p>The plan is simple:</p>
 <ol>
-<li>Create a database that is accessible from port 80.</li>
-<li>exfiltrate data using the attack box.</li>
-<li>Investigate the attack and harden the system.</li>
+<li>Stand up a database accessible over the network</li>
+<li>Exfiltrate data from the attacker machine</li>
+<li>Investigate the attack through Wazuh and harden the system</li>
 </ol>
-<p>So when creating a database, i used the commands below to setup my environment:</p>
+<h3 id="setting-up-the-environment"><a class="header" href="#setting-up-the-environment">Setting Up the Environment</a></h3>
+<p>Run the following on your Ubuntu server to install the required packages:</p>
 <pre><code class="language-bash">sudo apt update
 sudo apt install mysql-server python3 python3-pip
 pip3 install flask mysql-connector-python
 </code></pre>
-<p>When you run these commands, u might fall into an error as shown in this screenshot:</p>
+<p>You will likely hit an error at the <code>pip3</code> step as shown below.</p>
 <p><img src="images/soc/pip3%20error.png" alt="pip3 error"></p>
-<p>this error can be bypassed by simply using a vitual environment with python modules. this error comes about because of the PEP 668 – a Python enhancement proposal that Debian/Ubuntu adopted to protect your system from YOU (no offense 😄). You might look it out. So below is how i created my virtual environment</p>
-<pre><code class="language-bash">pyhton3 -m venv mysql_db
+<p>This is caused by <strong>PEP 668</strong>, a Python enhancement proposal adopted by Debian and Ubuntu to prevent pip from modifying system-managed packages. The fix is to use a virtual environment instead.</p>
+<pre><code class="language-bash">python3 -m venv mysql_db
 source mysql_db/bin/activate
 </code></pre>
-<p>Then u will see that u are in a virtual environment when the prompt changes and then run the pip3 command like so;</p>
+<p>Once activated, your terminal prompt will change to show you are inside the virtual environment.</p>
 <p><img src="images/soc/prompt_change.png" alt="prompt change"></p>
-<p>after that u will have ur connector installed, now run the following commands to create your server</p>
+<p>Now run the pip3 command again and it will work fine.</p>
+<hr>
+<h3 id="setting-up-the-database"><a class="header" href="#setting-up-the-database">Setting Up the Database</a></h3>
+<p>Start MySQL and create your database:</p>
 <pre><code class="language-bash">sudo mysql
 </code></pre>
-<p>this will start the db and now create a db and input the information as below</p>
-<pre><code class="language-bash">create datbase soc101;
-use soc101;
-create table users (
-    id int auto_increment primary key,
-    username varchar(100),
-    password varchar(100)
+<pre><code class="language-sql">CREATE DATABASE soc101;
+USE soc101;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100),
+    password VARCHAR(100)
 );
 
-insert into users (username,password) values ('admin','password123');
+INSERT INTO users (username, password) VALUES ('admin', 'password123');
 </code></pre>
-<p>and vwalah… we have a db. U might add users if u want..</p>
-<p>The next step is making this accessible from an application.. so we give it a backend. Below is our python backend code.</p>
+<p>Feel free to add more users if you want a richer dataset to work with later.</p>
+<hr>
+<h3 id="building-the-backend"><a class="header" href="#building-the-backend">Building the Backend</a></h3>
+<p>We need to expose this database over the network through a simple Flask application. This is what our attacker will be targeting.</p>
 <pre><code class="language-python">from flask import Flask, request
-import mysql.connector 
+import mysql.connector
 
 app = Flask(__name__)
 
@@ -272,20 +281,17 @@ db = mysql.connector.connect(
     user="labuser",
     password="labpass",
     database="soc101"
-
 )
 
-@app.route('/login',methods=['GET'])
+@app.route('/login', methods=['GET'])
 def login():
     username = request.args.get('username')
     password = request.args.get('password')
 
     cursor = db.cursor()
-    query = f"select * from users where username='{username}' and password='{password}'"
+    query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
     cursor.execute(query)
-
     result = cursor.fetchall()
-
 
     if result:
         return "Login successful"
@@ -294,13 +300,21 @@ def login():
 
 app.run(host='0.0.0.0', port=5000)
 </code></pre>
-<p>the service is then accessed by running this in the browser
-http://server-ip:5000/login?username=admin&amp;password=password123</p>
-<p><em>Please try to make sure that you solve the errors you find individually, read them and make reasearch and solve it the way you see fit</em></p>
-<p>So just because we have our db on the server which is an agent to the wazuh, thiss doesnt mean that wazuh will be able to automatically show us the logs from the db nless we explicitly tell it to. Wazuh will only record what u tell it to record.
-I feel like you thought we are done.. buckle up and follow…
-So to make sure that wazuh gets part of all the logs from the database, below is what we need to do.
-Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make the necessary tweaks.</p>
+<blockquote>
+<p><strong>Note for the sharp eyed:</strong> Yes, that query is intentionally vulnerable to SQL injection. That is the whole point. We want something to attack.</p>
+</blockquote>
+<p>Access the service from your browser using:</p>
+<pre><code>http://server-ip:5000/login?username=admin&amp;password=password123
+</code></pre>
+<blockquote>
+<p>If you run into errors along the way, read them carefully and troubleshoot individually. That is part of the process.</p>
+</blockquote>
+<hr>
+<h2 id="configuring-wazuh-to-collect-the-right-logs"><a class="header" href="#configuring-wazuh-to-collect-the-right-logs">Configuring Wazuh to Collect the Right Logs</a></h2>
+<p>Just because your Ubuntu server is a Wazuh agent does not mean Wazuh is automatically collecting everything. Wazuh only monitors what you explicitly tell it to monitor. We need to configure the agent to capture logs from the database, the application, the filesystem, and system activity.</p>
+<p>Replace the entire contents of <code>/var/ossec/etc/ossec.conf</code> on the agent with the configuration below. Make sure to update the server IP address to match your Wazuh manager.</p>
+<details>
+<summary><strong>Click to expand — ossec.conf (full agent configuration)</strong></summary>
 <pre><code class="language-xml">&lt;ossec_config&gt;
 
   &lt;!-- ==================== CLIENT CONFIGURATION ==================== --&gt;
@@ -357,35 +371,26 @@ Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make t
     &lt;frequency&gt;43200&lt;/frequency&gt;
     &lt;scan_on_start&gt;yes&lt;/scan_on_start&gt;
 
-    &lt;!-- Critical system paths --&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/etc&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/bin,/sbin,/usr/bin,/usr/sbin&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/boot&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/root&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/home&lt;/directories&gt;
-
-    &lt;!-- Web + DB --&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/var/www&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/var/lib/mysql&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/etc/mysql&lt;/directories&gt;
-
-    &lt;!-- SSH --&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/etc/ssh&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/home/*/.ssh&lt;/directories&gt;
-
-    &lt;!-- Cron (persistence detection) --&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/etc/cron*&lt;/directories&gt;
     &lt;directories check_all="yes" realtime="yes"&gt;/var/spool/cron&lt;/directories&gt;
 
     &lt;ignore&gt;/etc/mtab&lt;/ignore&gt;
     &lt;ignore type="sregex"&gt;.log$|.swp$|.tmp$&lt;/ignore&gt;
     &lt;nodiff&gt;/etc/ssl/private.key&lt;/nodiff&gt;
-
     &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
     &lt;skip_dev&gt;yes&lt;/skip_dev&gt;
     &lt;skip_proc&gt;yes&lt;/skip_proc&gt;
     &lt;skip_sys&gt;yes&lt;/skip_sys&gt;
-
     &lt;process_priority&gt;10&lt;/process_priority&gt;
     &lt;max_eps&gt;50&lt;/max_eps&gt;
 
@@ -417,9 +422,7 @@ Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make t
     &lt;skip_nfs&gt;yes&lt;/skip_nfs&gt;
   &lt;/sca&gt;
 
-  &lt;!-- ==================== LOG COLLECTION (OPTIMIZED) ==================== --&gt;
-
-  &lt;!-- SYSTEM (keep minimal since journald is enabled) --&gt;
+  &lt;!-- ==================== LOG COLLECTION ==================== --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;syslog&lt;/log_format&gt;
     &lt;location&gt;/var/log/auth.log&lt;/location&gt;
@@ -430,19 +433,16 @@ Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make t
     &lt;location&gt;/var/log/kern.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- JOURNALD (PRIMARY SOURCE) --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;journald&lt;/log_format&gt;
     &lt;location&gt;journald&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- FIREWALL --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;syslog&lt;/log_format&gt;
     &lt;location&gt;/var/log/ufw.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- WEB --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;syslog&lt;/log_format&gt;
     &lt;location&gt;/var/log/apache2/access.log&lt;/location&gt;
@@ -463,32 +463,27 @@ Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make t
     &lt;location&gt;/var/log/nginx/error.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- DATABASE --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;mysql_log&lt;/log_format&gt;
     &lt;location&gt;/var/log/mysql/error.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- DOCKER --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;json&lt;/log_format&gt;
     &lt;location&gt;/var/lib/docker/containers/*/*.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- CUSTOM APP --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;syslog&lt;/log_format&gt;
     &lt;location&gt;/var/log/flask_app.log&lt;/location&gt;
   &lt;/localfile&gt;
 
-  &lt;!-- WAZUH INTERNAL --&gt;
   &lt;localfile&gt;
     &lt;log_format&gt;syslog&lt;/log_format&gt;
     &lt;location&gt;/var/ossec/logs/active-responses.log&lt;/location&gt;
   &lt;/localfile&gt;
 
   &lt;!-- ==================== COMMAND MONITORING ==================== --&gt;
-
   &lt;localfile&gt;
     &lt;log_format&gt;command&lt;/log_format&gt;
     &lt;command&gt;df -P&lt;/command&gt;
@@ -537,91 +532,75 @@ Replace the entire /var/ossec/etc/ossec.conf with this.. make sure that u make t
     &lt;ca_verification&gt;yes&lt;/ca_verification&gt;
   &lt;/active-response&gt;
 
-  &lt;!-- ==================== AUDITD (ENHANCED) ==================== --&gt;
+  &lt;!-- ==================== AUDITD ==================== --&gt;
   &lt;wodle name="audit"&gt;
     &lt;disabled&gt;no&lt;/disabled&gt;
     &lt;interval&gt;1m&lt;/interval&gt;
-
-    &lt;!-- Execution --&gt;
     &lt;audit_rule&gt; -a always,exit -S execve -k process_execution&lt;/audit_rule&gt;
-
-    &lt;!-- Root commands --&gt;
     &lt;audit_rule&gt; -a always,exit -F arch=b64 -S execve -F euid=0 -k privileged_commands&lt;/audit_rule&gt;
-
-    &lt;!-- File access --&gt;
     &lt;audit_rule&gt; -a always,exit -S open,openat -k file_access&lt;/audit_rule&gt;
-
-    &lt;!-- Network --&gt;
     &lt;audit_rule&gt; -a always,exit -S connect,accept -k network_connections&lt;/audit_rule&gt;
-
-    &lt;!-- SSH --&gt;
     &lt;audit_rule&gt; -w /etc/ssh/sshd_config -p wa -k ssh_config&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /root/.ssh/authorized_keys -p wa -k ssh_keys&lt;/audit_rule&gt;
-
-    &lt;!-- Sudo --&gt;
     &lt;audit_rule&gt; -w /etc/sudoers -p wa -k sudoers_changes&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /etc/sudoers.d -p wa -k sudoers_changes&lt;/audit_rule&gt;
-
-    &lt;!-- Users --&gt;
     &lt;audit_rule&gt; -w /etc/passwd -p wa -k user_changes&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /etc/shadow -p wa -k user_changes&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /etc/group -p wa -k user_changes&lt;/audit_rule&gt;
-
-    &lt;!-- Cron --&gt;
     &lt;audit_rule&gt; -w /etc/cron.allow -p wa -k cron&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /etc/cron.deny -p wa -k cron&lt;/audit_rule&gt;
     &lt;audit_rule&gt; -w /etc/crontab -p wa -k cron&lt;/audit_rule&gt;
-
   &lt;/wodle&gt;
 
 &lt;/ossec_config&gt;
 </code></pre>
-<p>then after, apply all the logs to the system.. run the following commands.. on the linux agent.</p>
+</details>
+<p>Once you have the config in place, run the following commands on the agent to apply everything:</p>
 <pre><code class="language-bash"># 1. Backup current config
 sudo cp /var/ossec/etc/ossec.conf /var/ossec/etc/ossec.conf.backup
 
-# 2. Edit the file with the new configuration above
+# 2. Apply the new configuration
 sudo nano /var/ossec/etc/ossec.conf
 
-# 3. Enable MySQL logging (if not already)
+# 3. Enable MySQL general logging
 sudo mysql -e "SET GLOBAL general_log = 'ON';"
 sudo mysql -e "SET GLOBAL log_output = 'FILE';"
 sudo mysql -e "SET GLOBAL general_log_file = '/var/log/mysql/mysql.log';"
 
-# 4. Create MySQL log directory if needed
+# 4. Create MySQL log directory if it does not exist
 sudo mkdir -p /var/log/mysql
 sudo chown mysql:mysql /var/log/mysql
 sudo chmod 750 /var/log/mysql
 
-# 5. Restart Wazuh agent
+# 5. Restart the Wazuh agent
 sudo systemctl restart wazuh-agent
 
-# 6. Check for errors
+# 6. Verify there are no errors
 sudo tail -f /var/ossec/logs/ossec.log
 </code></pre>
-<p>after this.. we need to check with the siem and see if we are collecting the neccessary logs.
-Lets fst fine tune the Wazuh into more of a security tool.</p>
-<p>I will start with the dashboards section under the Explore pane.</p>
-<p><img src="images/soc/explore.png" alt="Explore section"></p>
-<p>As u can see there, navigate to the dashboards section and follow the following instructions. iam using version 4.14.
-We are building a A dashboard that shows in real-time any access to;</p>
+<hr>
+<h2 id="building-the-wazuh-dashboard"><a class="header" href="#building-the-wazuh-dashboard">Building the Wazuh Dashboard</a></h2>
+<p>Now that logs are flowing into Wazuh, we need to make sense of them visually. The goal is a real-time dashboard that shows:</p>
 <ul>
-<li>sudo privileges</li>
-<li>Successful or unsuccessful ssh and the username</li>
-<li>Any access to the /etc/passed and /etc/shadow files.
-this is what we are going to fst deal with, thenescalate slowly.
-We shall fst use a pichart, then a metric and a table for this.. buckel up!!</li>
+<li>Sudo privilege access attempts</li>
+<li>Successful and failed SSH logins with usernames</li>
+<li>Any access to <code>/etc/passwd</code> and <code>/etc/shadow</code></li>
 </ul>
-<p>In the explore section, select dashboards -&gt; create new and in the table, select the piechat.</p>
-<p><img src="images/soc/dashboard.png" alt="pie chat"></p>
-<p>Select the source as wazuh alerts. After that, we shall do most of the work from the left hand side. The pie chat is going to be showing the privilege mode access rate.
-So in the left pane, select aggregation mode as counts in the metrics tab and below in the custom name, i will name mine privileged alerts. u can use any name u see fit.
-Under the buckets, select the aggregation as terms and then add fields. to add fields, u have to fst know the available fiels for the data that u want to be visualised. so in this case we shall go discover and see what important data relates to prvileges. that is the data that we shall use in the fields.
-In the discovery field, in the search pane, serach for anything related to privileges <em>sudo</em>
-Then to the fst event, minimise it in order to be able to see the available fields that might interest you.
-I used my data field as <em>rule.mitre.technique</em> and this will help me see quite a number of things as shwon in the screenshort below.</p>
-<p><img src="images/soc/piechart.png" alt="pie_chart"></p>
-<p>so now we want to be able to see the count of the data that we are getting on our servers. how many hits e get in a day that relate to the technique and the tactic.</p>
+<p>Navigate to the <strong>Explore</strong> pane and open the <strong>Dashboards</strong> section.</p>
+<p><img src="images/soc/explore.png" alt="Explore section"></p>
+<blockquote>
+<p>I am running Wazuh version 4.14 for this walkthrough.</p>
+</blockquote>
+<p>Click <strong>Create New</strong> and select the <strong>Pie Chart</strong> visualisation type.</p>
+<p><img src="images/soc/dashboard.png" alt="pie chart"></p>
+<p>Set the data source to <strong>Wazuh Alerts</strong>. Most of the configuration happens in the left panel:</p>
+<p><strong>Metrics tab</strong>
+Set the aggregation to <strong>Count</strong> and give it a custom name. I used “Privileged Alerts” but you can name it anything meaningful.</p>
+<p><strong>Buckets tab</strong>
+Set the aggregation to <strong>Terms</strong>, then choose your field. To know which fields are available and relevant, head over to the <strong>Discover</strong> section first and search for <code>sudo</code>. Open one of the events and look through the available fields to find what you need.</p>
+<p>The field I used is <code>rule.mitre.technique</code>, which gives a nice breakdown of the techniques being triggered across your monitored endpoints.</p>
+<p><img src="images/soc/piechart.png" alt="pie chart result"></p>
+<p>From here we will build on top of this, adding metrics and tables to get a fuller picture of what is happening on the server. We will escalate the complexity gradually.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="enterprise-networking"><a href="#enterprise-networking" class="header">Enterprise Networking</a></h1>
 <h2 id="projects"><a class="header" href="#projects">Projects</a></h2>
