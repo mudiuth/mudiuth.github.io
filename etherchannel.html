@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4e2f1789.js";
+            window.path_to_searchindex_js = "searchindex-2b53a200.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c56f5554.js"></script>
@@ -174,37 +174,71 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="configuring-etherchannel"><a class="header" href="#configuring-etherchannel">Configuring etherchannel</a></h2>
-<p>Ether channel is the process of combining two physical ports and making them work as one. Below is my topology.
-<img src="./images/etherchannel/topology.png" alt="topology"></p>
-<p>We have 3 different switches and two different PCs. The PCs should communicate with no loss.
-Below are the commands to be run in each of the switches.</p>
+                        <h2 id="configuring-etherchannel"><a class="header" href="#configuring-etherchannel">Configuring EtherChannel</a></h2>
+<p>EtherChannel is the process of bundling two or more physical ports together so they function as a single logical link. This increases bandwidth and provides redundancy without Spanning Tree Protocol blocking any of the links.</p>
+<p>Below is the topology used for this configuration.</p>
+<p><img src="./images/etherchannel/topology.png" alt="topology"></p>
+<p>We have 3 switches and 2 PCs. The goal is to have the PCs communicate with zero packet loss across the switches.</p>
+<hr>
+<h3 id="configuration-commands"><a class="header" href="#configuration-commands">Configuration Commands</a></h3>
+<p>Below are the commands to be run on each switch.</p>
 <pre><code class="language-text">int range f0/1-2
 channel-protocol lacp
 channel-group 1 mode active
-
 int port-channel 1
-switchport mode trunk 
+switchport mode trunk
 spanning-tree portfast
 
 int range f0/3-4
-channel-protocol lacpp
+channel-protocol lacp
 channel-group 2 mode active
-
 int port-channel 2
-switchport mode trunk 
+switchport mode trunk
 spanning-tree portfast
 </code></pre>
-<p>Please be mindful about the ports. U might want to repeat the command for each ports in the range if the ports are not continuous. We only use the <strong>range</strong> command only when the ports are continuous.</p>
-<h1 id="commands-explained"><a class="header" href="#commands-explained">Commands explained.</a></h1>
+<blockquote>
+<p><strong>Note:</strong> Pay attention to your port numbers. The <code>range</code> command only works when the ports are continuous. If your ports are not continuous, configure each interface separately rather than using a range.</p>
+</blockquote>
+<hr>
+<h3 id="commands-explained"><a class="header" href="#commands-explained">Commands Explained</a></h3>
+<p><strong><code>int range &lt;port-range&gt;</code></strong>
+Selects a range of continuous interfaces and applies configuration to all of them at once. For example, <code>int range f0/1-2</code> targets FastEthernet 0/1 and 0/2 simultaneously.</p>
+<p><strong><code>channel-protocol lacp</code></strong>
+Sets the EtherChannel negotiation protocol. Cisco supports two options:</p>
 <ul>
-<li><strong>int range <port range=""></port></strong>: This is used to combine a range of continous ports and configure them at once.</li>
-<li><strong>channel-protocol lacp</strong> This is used to chose the protocol to be used for the configuration. CISCO has two different protocols for etherchannel connection ie lacp (Link Aggregation Control Protocol which is the standard protocol) and PAgP (Port Aggregataion Protocaol. This is Cisco proprietry protocol)</li>
-<li><strong>channel-group <number> mode active</number></strong>: It adds the interface to an EtherChannel and enables LACP in active mode to actively negotiate the bundle</li>
-<li><strong>int port-channel <bundle number=""></bundle></strong>: This enters the port for other configurations.</li>
+<li><strong>LACP</strong> (Link Aggregation Control Protocol) — the IEEE 802.3ad standard protocol, works across different vendor devices.</li>
+<li><strong>PAgP</strong> (Port Aggregation Protocol) — Cisco proprietary, only works between Cisco devices.</li>
 </ul>
-<p><em>the rest of the commands are discussed in enterprise networking</em></p>
-<h1 id="why-use-the-etherchannel-configuration-for-the-network"><a class="header" href="#why-use-the-etherchannel-configuration-for-the-network">Why use the etherchannel configuration for the network.</a></h1>
+<p>LACP is generally the better choice unless you are in a purely Cisco environment and have a specific reason to use PAgP.</p>
+<p><strong><code>channel-group &lt;number&gt; mode active</code></strong>
+Adds the interface to an EtherChannel bundle and enables LACP in active mode, meaning the switch will actively send LACP packets to negotiate the bundle with the other end.</p>
+<p><strong><code>int port-channel &lt;number&gt;</code></strong>
+Enters the logical port-channel interface for further configuration such as setting the trunk mode and enabling PortFast.</p>
+<blockquote>
+<p>The remaining commands such as <code>switchport mode trunk</code> and <code>spanning-tree portfast</code> are covered in detail in the Enterprise Networking section.</p>
+</blockquote>
+<hr>
+<h3 id="why-use-etherchannel"><a class="header" href="#why-use-etherchannel">Why Use EtherChannel?</a></h3>
+<p>There are a few solid reasons why a network engineer would choose EtherChannel over just using a single link between switches.</p>
+<p><strong>Increased Bandwidth</strong>
+Instead of being limited to the speed of one physical link, EtherChannel combines the bandwidth of all bundled ports. Two FastEthernet links bundled together give you an effective 200Mbps instead of 100Mbps. This matters a lot on trunk links between switches carrying traffic for multiple VLANs.</p>
+<p><strong>Redundancy Without STP Blocking</strong>
+Normally if you connect two switches with more than one link, Spanning Tree Protocol will block all but one of those links to prevent loops. With EtherChannel, STP sees the entire bundle as a single logical link, so none of the physical ports get blocked. You get redundancy and full bandwidth at the same time.</p>
+<p><strong>Automatic Failover</strong>
+If one of the physical links in the bundle goes down, traffic automatically shifts to the remaining links with no disruption to the network. Users will not notice anything happened.</p>
+<p><strong>Load Balancing</strong>
+Traffic is distributed across all the physical links in the bundle based on a load balancing method such as source/destination MAC address or IP address. This makes better use of all available links rather than saturating a single one.</p>
+<hr>
+<h3 id="potential-problems-with-etherchannel"><a class="header" href="#potential-problems-with-etherchannel">Potential Problems with EtherChannel</a></h3>
+<p>EtherChannel is useful but it can also cause headaches if not configured carefully.</p>
+<p><strong>Misconfiguration on One End</strong>
+EtherChannel requires both sides of the link to have matching configuration. If one switch has the channel-group set to active and the other is not configured for EtherChannel at all, the bundle will not form and you may end up with the ports being blocked by STP or flapping constantly.</p>
+<p><strong>Mismatched Parameters</strong>
+Both sides must match on speed, duplex, VLAN configuration, and trunk settings. If one port in the bundle is configured differently from the others, the entire EtherChannel can go down or behave unpredictably.</p>
+<p><strong>Load Imbalance</strong>
+Depending on the load balancing method configured, you might find that most traffic ends up flowing through just one or two links in the bundle while the others sit mostly idle. This defeats the purpose of bundling in the first place and requires tuning the load balancing algorithm to match your traffic patterns.</p>
+<p><strong>Troubleshooting Complexity</strong>
+When something goes wrong on a bundled link it can be harder to isolate which physical port is causing the issue. You have to look at both the port-channel interface and the individual member interfaces to get the full picture.</p>
 
                     </main>
 

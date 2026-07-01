@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-4e2f1789.js";
+            window.path_to_searchindex_js = "searchindex-2b53a200.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c56f5554.js"></script>
@@ -278,6 +278,235 @@ default-router 195.0.0.100 255.255.255.0
 do write
 </code></pre>
 <p>And if u ping this time round, they should be able to communicate through the router.</p>
+<h1 id="multi-protocol-enterprise-network-design-with-route-redistribution"><a class="header" href="#multi-protocol-enterprise-network-design-with-route-redistribution">Multi-Protocol Enterprise Network Design with Route Redistribution</a></h1>
+<blockquote>
+<p><strong>Protocols covered:</strong> OSPF · EIGRP · RIP v2 · GRE Tunneling · VLANs · EtherChannel · VoIP</p>
+</blockquote>
+<p>This write-up documents the design and simulation of a multi-protocol enterprise network built in Cisco Packet Tracer. The core focus is <strong>route redistribution</strong>. A technique used in real-world networks to allow routers running different routing protocols to share routing information seamlessly. This kind of setup is common in large organisations that span multiple geographic regions, each managed with different routing protocols.</p>
+<hr>
+<h2 id="what-was-implemented"><a class="header" href="#what-was-implemented">What Was Implemented</a></h2>
+<ul>
+<li>Generic Routing Encapsulation (GRE) tunneling</li>
+<li>Routing protocols: OSPF (Area 1), RIP v2 (Area 2), EIGRP (Area 3)</li>
+<li>Route redistribution across all three protocols via a core router</li>
+<li>VLANs and Inter-VLAN routing</li>
+<li>IP Phones (VoIP)</li>
+<li>EtherChannel (link aggregation)</li>
+<li>Variable Length Subnet Masking (VLSM)</li>
+<li>Layer 2 and Layer 3 security basics</li>
+</ul>
+<hr>
+<h2 id="network-topology"><a class="header" href="#network-topology">Network Topology</a></h2>
+<p><img src="./images/enterprise_networking/redi.png" alt="Network Topology"></p>
+<p>The network is divided into three protocol areas connected through a central core router that handles redistribution between them. The topology is designed to scale more configurations are being added over time.</p>
+<p><a href="./advanced%20project.pkt">Download the Packet Tracer file (.pkt)</a></p>
+<blockquote>
+<p><strong>Prerequisites:</strong> This guide assumes basic networking knowledge; IP addressing, subnetting, and a conceptual understanding of how routing protocols work. The IP addressing configuration is not covered here; focus is on the routing and redistribution setup.</p>
+</blockquote>
+<hr>
+<h2 id="routing-protocol-configuration"><a class="header" href="#routing-protocol-configuration">Routing Protocol Configuration</a></h2>
+<p>Each area runs a single routing protocol. The commands below configure each protocol on the relevant routers. Routers not explicitly shown here require minor adjustments based on their specific interface assignments — the pattern remains consistent.</p>
+<h3 id="area-1--ospf"><a class="header" href="#area-1--ospf">Area 1 — OSPF</a></h3>
+<pre><code>! Router 1
+en
+conf t
+router ospf 100
+ network 192.168.1.0 0.0.0.255 area 1
+ network 10.0.0.0 0.0.0.3 area 1
+exit
+do copy run start
+
+! Router 2 (border)
+en
+conf t
+router ospf 100
+ network 10.0.0.0 0.0.0.3 area 1
+ network 11.0.0.0 0.0.0.3 area 1
+ network 2.0.0.0 0.0.0.3 area 1
+exit
+do copy run start
+</code></pre>
+<h3 id="area-2--rip-v2"><a class="header" href="#area-2--rip-v2">Area 2 — RIP v2</a></h3>
+<pre><code>! Router 1
+en
+conf t
+router rip
+ version 2
+ network 192.168.3.0
+ network 13.0.0.0
+ network 12.0.0.0
+ network 192.168.3.64
+ network 192.168.3.128
+ no auto-summary
+do copy run start
+
+! Router 2 (border)
+en
+conf t
+router rip
+ version 2
+ network 12.0.0.0
+ network 3.0.0.0
+ no auto-summary
+exit
+do copy run start
+</code></pre>
+<h3 id="area-3--eigrp"><a class="header" href="#area-3--eigrp">Area 3 — EIGRP</a></h3>
+<pre><code>! Router 1
+en
+conf t
+router eigrp 200
+ network 192.168.5.0 0.0.0.63
+ network 192.168.6.0 0.0.0.63
+ network 192.168.6.128 0.0.0.63
+ network 192.168.5.64 0.0.0.63
+ network 14.0.0.0 0.0.0.3
+ no auto-summary
+exit
+do copy run start
+
+! Router 2
+en
+conf t
+router eigrp 200
+ network 192.168.6.0 0.0.0.31
+ network 192.168.6.32 0.0.0.3
+ network 15.0.0.0 0.0.0.3
+ network 1.0.0.0 0.255.255.255
+ no auto-summary
+exit
+do copy run start
+
+! Router 3 (border)
+en
+conf t
+router eigrp 200
+ network 1.0.0.0 0.255.255.255
+ network 4.0.0.0 0.0.0.3
+ network 14.0.0.0 0.0.0.3
+ network 15.0.0.0 0.0.0.3
+ network 192.168.7.0 0.0.0.3
+ no auto-summary
+exit
+do copy run start
+</code></pre>
+<hr>
+<h2 id="gre-tunneling"><a class="header" href="#gre-tunneling">GRE Tunneling</a></h2>
+<p>Generic Routing Encapsulation (GRE) is a Cisco-developed tunneling protocol that wraps network layer packets inside virtual point-to-point IP links. In this project, GRE tunnels connect the RIP area (Area 2) and EIGRP area (Area 3) to the core, allowing routing information to flow across protocol boundaries before redistribution takes effect.</p>
+<p>Common use cases include VPNs, carrying multicast traffic over unicast networks, and tunneling IPv6 over IPv4.</p>
+<pre><code>! Area 2 (RIP side)
+en
+conf t
+interface tunnel 0
+ ip address 1.1.1.1 255.255.255.252
+ tunnel source s0/2/0
+ tunnel destination 12.0.0.1
+
+! Area 3 (EIGRP side)
+en
+conf t
+interface tunnel 0
+ ip address 1.1.1.2 255.255.255.252
+ tunnel source s0/3/1
+ tunnel destination 4.0.0.1
+</code></pre>
+<blockquote>
+<p>Tunnel source and destination values will differ based on your specific interface assignments and IP addressing scheme. Adjust accordingly.</p>
+</blockquote>
+<hr>
+<h2 id="route-redistribution"><a class="header" href="#route-redistribution">Route Redistribution</a></h2>
+<p>This is the most critical part of the setup. The <strong>core router</strong> sits at the intersection of all three protocol areas. It activates each protocol only on its respective interface, then redistributes routes between them so that every device in every area can reach every other device.</p>
+<h3 id="step-1--configure-core-router-interfaces"><a class="header" href="#step-1--configure-core-router-interfaces">Step 1 — Configure Core Router Interfaces</a></h3>
+<pre><code>en
+conf t
+
+! Interface toward OSPF area
+interface s0/1/0
+ no shutdown
+ ip address 2.0.0.2 255.255.255.252
+exit
+
+! Interface toward RIP area
+interface s0/3/0
+ no shutdown
+ ip address 3.0.0.2 255.255.255.252
+exit
+
+! Interface toward EIGRP area
+interface s0/3/1
+ no shutdown
+ ip address 4.0.0.1 255.255.255.252
+exit
+</code></pre>
+<h3 id="step-2--activate-each-protocol-on-its-interface-only"><a class="header" href="#step-2--activate-each-protocol-on-its-interface-only">Step 2 — Activate Each Protocol on Its Interface Only</a></h3>
+<pre><code>! Activate RIP only on the RIP-facing interface
+router rip
+ version 2
+ network 3.0.0.0
+ no auto-summary
+exit
+
+! Activate EIGRP only on the EIGRP-facing interface
+router eigrp 200
+ network 4.0.0.0 0.0.0.3
+ no auto-summary
+exit
+
+! Activate OSPF only on the OSPF-facing interface
+router ospf 100
+ network 2.0.0.0 0.0.0.3 area 1
+exit
+</code></pre>
+<h3 id="step-3--configure-redistribution"><a class="header" href="#step-3--configure-redistribution">Step 3 — Configure Redistribution</a></h3>
+<blockquote>
+<p><strong>Important:</strong> Each protocol uses a different metric system, so you must manually specify the metric when redistributing into it. EIGRP requires five metric components: <code>bandwidth delay reliability load MTU</code>. OSPF and RIP use simpler cost/hop-count metrics.</p>
+</blockquote>
+<pre><code>! RIP learns routes from OSPF and EIGRP
+router rip
+ redistribute ospf 100 metric 2
+ redistribute eigrp 200 metric 2
+exit
+
+! OSPF learns routes from RIP and EIGRP
+router ospf 100
+ redistribute rip metric 20 subnets
+ redistribute eigrp 200 metric 20 subnets
+exit
+
+! EIGRP learns routes from RIP and OSPF
+! Format: metric &lt;bandwidth&gt; &lt;delay&gt; &lt;reliability&gt; &lt;load&gt; &lt;MTU&gt;
+router eigrp 200
+ redistribute rip metric 10000 100 255 1 1500
+ redistribute ospf 100 metric 10000 100 255 1 1500
+exit
+
+do copy run start
+</code></pre>
+<hr>
+<h2 id="verification"><a class="header" href="#verification">Verification</a></h2>
+<p>After configuration, use these commands to confirm routes are being redistributed correctly:</p>
+<pre><code>! View the full routing table
+! Look for R (RIP), O E2 (OSPF external), D EX (EIGRP external) prefixes
+show ip route
+
+! Check OSPF neighbor relationships
+show ip ospf neighbor
+
+! Check EIGRP neighbor relationships
+show ip eigrp neighbors
+
+! Test end-to-end reachability across areas
+ping &lt;destination-ip&gt;
+
+! Trace the path a packet takes
+traceroute &lt;destination-ip&gt;
+</code></pre>
+<p>In the routing table, redistributed routes appear with an external tag <code>O E2</code> for OSPF external, <code>D EX</code> for EIGRP external. Seeing these tags across areas confirms redistribution is working correctly.</p>
+<hr>
+<h2 id="conclusion"><a class="header" href="#conclusion">Conclusion</a></h2>
+<p>Building and troubleshooting this topology gave a solid hands-on understanding of how large enterprise networks manage routing across heterogeneous protocol environments. The key takeaway is that redistribution is powerful but requires careful metric configuration. A wrong value can cause routing loops or suboptimal paths.</p>
+<p>This project is still being expanded. Planned additions include HSRP for gateway redundancy, QoS for VoIP traffic prioritisation, and more advanced Layer 2/3 security configurations.</p>
+<p>Questions or corrections are welcome feel free to reach out.</p>
 
                     </main>
 
